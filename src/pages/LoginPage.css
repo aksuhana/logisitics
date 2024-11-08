@@ -1,0 +1,145 @@
+/* src/pages/LoginPage.css */
+
+/* Define color variables */
+:root {
+    --emerald-green: #50c878;
+    --dark-emerald: #3a9b66;
+    --light-emerald: #8fd1b9;
+    --white: #ffffff;
+    --shadow-color: rgba(0, 0, 0, 0.2);
+}
+
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #e0f7fa, #50c878);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Container for the entire login box with animated shadow */
+.login-container {
+    background-color: var(--emerald-green);
+    padding: 40px;
+    width: 400px;
+    margin: 80px auto;
+    border-radius: 12px;
+    box-shadow: 0px 8px 15px var(--shadow-color);
+    text-align: center;
+    color: var(--white);
+    position: relative;
+    overflow: hidden;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Glow effect on form fields */
+.ant-input,
+.ant-input-password {
+    background-color: var(--light-emerald);
+    border: none;
+    border-radius: 5px;
+    box-shadow: inset 0px 0px 5px var(--shadow-color);
+    transition: box-shadow 0.3s ease;
+    color: #333;
+    font-weight: bold;
+}
+
+.ant-input:focus,
+.ant-input-password:focus {
+    box-shadow: 0px 0px 8px var(--white), inset 0px 0px 5px var(--shadow-color);
+    outline: none;
+}
+
+.ant-form-item-label > label {
+    color: var(--white);
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* Button style with animated gradient */
+.ant-btn-primary {
+    background: linear-gradient(90deg, var(--dark-emerald), var(--emerald-green));
+    border: none;
+    color: var(--white);
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.ant-btn-primary:hover,
+.ant-btn-primary:focus {
+    background: linear-gradient(90deg, var(--emerald-green), var(--dark-emerald));
+    transform: scale(1.05);
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.25);
+}
+
+/* Floating bubbles for decorative effect */
+.login-container:before, .login-container:after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.2);
+    animation: bubble 6s infinite ease-in-out;
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.login-container:before {
+    width: 100px;
+    height: 100px;
+    bottom: -50px;
+    left: -20px;
+    animation-duration: 7s;
+}
+
+.login-container:after {
+    width: 120px;
+    height: 120px;
+    top: -50px;
+    right: -20px;
+    animation-duration: 5s;
+}
+
+@keyframes bubble {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(-20px) scale(1.2);
+    }
+}
+
+/* Footer text style */
+.footer-text {
+    color: #ddd;
+    font-size: 0.9rem;
+    margin-top: 2rem;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.footer-text:hover {
+    opacity: 1;
+}
+
+.footer-text a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+}
+.footer-text a:hover {
+    text-decoration: underline;
+}

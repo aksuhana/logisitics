@@ -1,0 +1,15 @@
+/* src/pages/HomePage.css */
+.home-container {
+    text-align: center;
+    padding: 40px;
+    background-color: var(--gray);
+    color: var(--emerald-green);
+}
+
+.ant-typography {
+    color: var(--dark-emerald);
+}
+
+.ant-typography-paragraph {
+    color: var(--emerald-green);
+}

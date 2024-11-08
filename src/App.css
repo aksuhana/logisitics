@@ -36,3 +36,19 @@
     transform: rotate(360deg);
   }
 }
+
+/* src/App.css */
+
+:root {
+  --emerald-green: #50C878;
+  --dark-emerald: #409769;
+  --light-emerald: #A3E4BA;
+  --white: #FFFFFF;
+  --gray: #F0F0F0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: var(--gray);
+  color: var(--dark-emerald);
+}

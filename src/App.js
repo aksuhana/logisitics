@@ -1,25 +1,47 @@
-import logo from './logo.svg';
-import './App.css';
+// src/App.js
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import LoginPage from './pages/LoginPage';
+import HomePage from './pages/HomePage';
+import { useAuth } from './AuthContext';
+
+function PrivateRoute({ children }) {
+    const { isAuthenticated } = useAuth();
+    return isAuthenticated() ? children : <Navigate to="/login" />;
+}
+
+function PublicRoute({ children }) {
+    const { isAuthenticated } = useAuth();
+    return !isAuthenticated() ? children : <Navigate to="/home" />;
+}
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const { isAuthenticated } = useAuth();
+
+    return (
+        <Router>
+            <Routes>
+                <Route
+                    path="/login"
+                    element={
+                        <PublicRoute>
+                            <LoginPage />
+                        </PublicRoute>
+                    }
+                />
+                <Route
+                    path="/home"
+                    element={
+                        <PrivateRoute>
+                            <HomePage />
+                        </PrivateRoute>
+                    }
+                />
+                {/* Catch-all route to redirect based on authentication status */}
+                <Route path="*" element={<Navigate to={isAuthenticated() ? "/home" : "/login"} />} />
+            </Routes>
+        </Router>
+    );
 }
 
 export default App;
