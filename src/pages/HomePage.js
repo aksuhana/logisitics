@@ -17,7 +17,7 @@ const HomePage = () => {
     // Generate 1000 sample records on component mount
     useEffect(() => {
         const generateSampleData = () => {
-            const data = Array.from({ length: 1000 }, (_, i) => ({
+            const data = Array.from({ length: 4 }, (_, i) => ({
                 key: i + 1,
                 vehicleNo: `VEH${String(i + 1).padStart(3, '0')}`,
                 date: `2023-${String((i % 12) + 1).padStart(2, '0')}-01`,
@@ -74,7 +74,11 @@ const HomePage = () => {
         form.setFieldsValue({ balance: calculatedBalance });
     };
 
+    const onDataChange = (updatedData) => {
+        setFormData(updatedData); // Update the data in the state when it changes in DataGrid
+    };
     return (
+        <>
         <div className="home-container">
             <Input
                 placeholder="Enter Vehicle Number"
@@ -173,13 +177,19 @@ const HomePage = () => {
             </div>
 
             {/* Data Grid Component */}
-            <DataGrid
+            
+        </div>
+        <div>
+
+        <DataGrid
                 data={formData}
+                onDataChange={onDataChange} // Pass onDataChange to DataGrid
                 filterValue={filterValue}
                 selectedYear={selectedYear}
                 selectedMonth={selectedMonth}
             />
-        </div>
+            </div>
+        </>
     );
 };
 
