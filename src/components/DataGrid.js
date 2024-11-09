@@ -40,9 +40,12 @@ const DataGrid = ({ data, onDataChange, filterValue, selectedYear, selectedMonth
                 const otherAmount = item.otherAmount || 0;
 
                 const totalSpent = advance + diesel + driverAdvance + commission + otherAmount;
-                item.profitOrLoss = dealAmount - totalSpent;
+                if (item.balance === 0) {
+                    item.profitOrLoss = dealAmount - totalSpent;
+                } else {
+                    item.profitOrLoss = advance - totalSpent;
+                }
             }
-            console.log("first", item);
             return item;
         });
 
@@ -125,29 +128,24 @@ const DataGrid = ({ data, onDataChange, filterValue, selectedYear, selectedMonth
         },
 
         {
-
             title: 'Profit/Loss',
-
             dataIndex: 'profitOrLoss',
-
             key: 'profitOrLoss',
-
             render: (text, record) => {
-
-                const profitOrLoss = record.dealAmount - record.advance||0 - (record.balance || 0);
-
+                // Calculate total spent excluding advance
+                const totalSpent = (record.diesel || 0) + (record.driverAdvance || 0) + (record.commission || 0) + (record.otherAmount || 0);
+               
+                // Conditional logic for profit/loss calculation
+                const profitOrLoss = record.balance === 0
+                    ? record.dealAmount - totalSpent
+                    : (record.advance ?? 0) - totalSpent;
+                    console.log("totalSpent", totalSpent, record.balance, record.dealAmount, record.advance, profitOrLoss )
                 return (
-
                     <span style={{ color: profitOrLoss >= 0 ? 'green' : 'red', fontWeight: 'bold' }}>
-
-                        {profitOrLoss >= 0 ? `${profitOrLoss}` : `-${Math.abs(profitOrLoss)}`}
-
+                        {profitOrLoss >= 0 ? `Profit: ${profitOrLoss}` : `Loss: -${Math.abs(profitOrLoss)}`}
                     </span>
-
                 );
-
             },
-
         },
 
         {
