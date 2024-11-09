@@ -27,19 +27,23 @@ const DataGrid = ({ data, onDataChange, filterValue, selectedYear, selectedMonth
 
 
     const handleBalanceChange = (value, record) => {
-
         const newData = data.map((item) => {
-
             if (item.key === record.key) {
+                item.balance = Number(value) || 0;
 
-                item.balance = Number(value);
+                // Calculate profit or loss with defaults for missing values
+                const dealAmount = item.dealAmount || 0;
+                const advance = item.advance || 0;
+                const diesel = item.diesel || 0;
+                const driverAdvance = item.driverAdvance || 0;
+                const commission = item.commission || 0;
+                const otherAmount = item.otherAmount || 0;
 
-                item.profitOrLoss = item.dealAmount - item.advance - item.balance;
-
+                const totalSpent = advance + diesel + driverAdvance + commission + otherAmount;
+                item.profitOrLoss = dealAmount - totalSpent;
             }
-
+            console.log("first", item);
             return item;
-
         });
 
         onDataChange(newData);
@@ -130,7 +134,7 @@ const DataGrid = ({ data, onDataChange, filterValue, selectedYear, selectedMonth
 
             render: (text, record) => {
 
-                const profitOrLoss = record.dealAmount - record.advance - (record.balance || 0);
+                const profitOrLoss = record.dealAmount - record.advance||0 - (record.balance || 0);
 
                 return (
 

@@ -17,7 +17,7 @@ const HomePage = () => {
     // Generate 1000 sample records on component mount
     useEffect(() => {
         const generateSampleData = () => {
-            const data = Array.from({ length: 4 }, (_, i) => ({
+            const data = Array.from({ length: 40 }, (_, i) => ({
                 key: i + 1,
                 vehicleNo: `VEH${String(i + 1).padStart(3, '0')}`,
                 date: `2023-${String((i % 12) + 1).padStart(2, '0')}-01`,
@@ -26,7 +26,7 @@ const HomePage = () => {
                 dealAmount: Math.floor(Math.random() * 5000) + 500,
                 advance: Math.floor(Math.random() * 300) + 100,
                 balance: Math.floor(Math.random() * 4500) + 500,
-                diesel: Math.floor(Math.random() * 100) + 10,
+                diesel: `${Math.floor(Math.random() * 100) + 10} Ltr`,
                 driverAdvance: Math.floor(Math.random() * 300) + 50,
                 commission: Math.floor(Math.random() * 200) + 50,
                 otherAmount: Math.floor(Math.random() * 100) + 10
@@ -99,19 +99,29 @@ const HomePage = () => {
                         <span>Deal Amount</span>
                         <span>Advance</span>
                     </div>
-                    <Form.Item name="vehicleNo">
+                    <Form.Item name="vehicleNo"
+                    rules={[{ required: true, message: 'Please enter the vehicle number!' }]}
+                    >
                         <Input placeholder="Vehicle No" />
+                        
                     </Form.Item>
-                    <Form.Item name="date">
+                    <Form.Item name="date"
+                     rules={[{ required: true, message: 'Please enter start date!' }]}>
                         <DatePicker placeholder="Date" style={{ width: '150px' }} />
                     </Form.Item>
-                    <Form.Item name="from">
+                    <Form.Item name="from"
+                     rules={[{ required: true, message: 'Please enter Source Place!' }]}
+                    >
                         <Input placeholder="From" />
                     </Form.Item>
-                    <Form.Item name="to">
+                    <Form.Item name="to"
+                     rules={[{ required: true, message: 'Please enter destination!' }]}
+                    >
                         <Input placeholder="To" />
                     </Form.Item>
-                    <Form.Item name="dealAmount">
+                    <Form.Item name="dealAmount"
+                     rules={[{ required: true, message: 'Please enter deal amount!' }]}
+                    >
                         <Input placeholder="Deal Amount" onChange={updateBalance} />
                     </Form.Item>
                     <Form.Item name="advance">
