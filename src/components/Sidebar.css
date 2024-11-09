@@ -1,33 +1,27 @@
-/* src/components/Sidebar.css */
+/* src/styles/sidebarAnimations.css */
+
+@keyframes slideIn {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOut {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
 
 .sidebar {
-    background-color: #333;
-    color: #edf2f4;
-    width: 230px !important;
-    height: calc(100vh - 60px); /* Full height minus header */
-    position: fixed;
-    top: 60px; /* Align with header height */
-    left: 0;
-    display: flex;
-    flex-direction: column;
-    padding-top: 20px;
-    box-shadow: 2px 0px 8px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.5s ease-out forwards;
 }
 
-.sidebar-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    padding-left: 20px;
-}
-
-.sidebar-link {
-    color: #edf2f4;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.3s ease;
-}
-
-.sidebar-link:hover {
-    color: #50c878;
+.sidebar-hidden {
+    animation: slideOut 0.5s ease-in forwards;
 }

@@ -1,0 +1,53 @@
+/* src/styles/sidebarAnimations.css */
+
+/* Import a unified font for both header and sidebar */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+
+:root {
+    --main-font: 'Poppins', sans-serif;
+    --text-color: #ddd;
+    --highlight-color: #50c878;
+}
+
+/* Header title styling */
+.header-title {
+    font-family: var(--main-font);
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--highlight-color);
+    animation: fadeIn 1s ease forwards;
+}
+
+/* Sidebar text styling */
+.sidebar-text {
+    font-family: var(--main-font);
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+/* Header right-side menu styling */
+.header-menu .ant-menu-item a {
+    font-family: var(--main-font);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-color);
+    transition: color 0.3s ease;
+}
+
+/* Hover effect for header right-side menu items */
+.header-menu .ant-menu-item a:hover {
+    color: var(--highlight-color);
+}
+
+/* Subtle fade-in animation for header text */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

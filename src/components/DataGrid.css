@@ -1,0 +1,10 @@
+/* src/components/DataGrid.css */
+
+.custom-table .ant-table-thead > tr > th {
+    padding: 16px; /* Increase padding for header cells */
+    font-size: 16px; /* Larger font size */
+    font-weight: 600; /* Bolder font weight */
+    background-color: #f0f2f5; /* Light background color */
+    border-bottom: 2px solid #d9d9d9; /* Thicker bottom border */
+    color: #333; /* Darker text color */
+}
