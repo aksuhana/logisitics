@@ -1,0 +1,33 @@
+/* src/components/Sidebar.css */
+
+.sidebar {
+    background-color: #333;
+    color: #edf2f4;
+    width: 230px !important;
+    height: calc(100vh - 60px); /* Full height minus header */
+    position: fixed;
+    top: 60px; /* Align with header height */
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+    box-shadow: 2px 0px 8px rgba(0, 0, 0, 0.3);
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-left: 20px;
+}
+
+.sidebar-link {
+    color: #edf2f4;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.sidebar-link:hover {
+    color: #50c878;
+}

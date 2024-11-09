@@ -1,15 +1,48 @@
 /* src/pages/HomePage.css */
+
+:root {
+    --primary-color: #007BFF; /* Change to your preferred primary color */
+    --secondary-color: #f8f9fa;
+    --text-color: #333;
+}
+
 .home-container {
+    background-color: var(--secondary-color);
+    padding: 20px;
+    max-width: 800px;
+    margin: 50px auto;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
     text-align: center;
-    padding: 40px;
-    background-color: var(--gray);
-    color: var(--emerald-green);
+    color: var(--text-color);
 }
 
-.ant-typography {
-    color: var(--dark-emerald);
+.home-title {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-weight: bold;
 }
 
-.ant-typography-paragraph {
-    color: var(--emerald-green);
+.home-content {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-top: 1rem;
+    color: var(--text-color);
+}
+
+.home-button {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.home-button:hover {
+    background-color: darken(var(--primary-color), 10%);
 }

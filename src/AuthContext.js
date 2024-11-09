@@ -1,6 +1,7 @@
 // src/AuthContext.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import CryptoJS from 'crypto-js';
+import { toast } from 'react-toastify'; // Import toast for notifications
 
 const AuthContext = createContext();
 
@@ -16,24 +17,25 @@ export function AuthProvider({ children }) {
         return CryptoJS.SHA256(`${inputSecret}:${SECRET_SALT}`).toString();
     };
 
+    // Derived state to determine if the user is authenticated
+    const isAuthenticated = authToken === HASHED_SECRET;
+
     // Login function that validates the input by hashing and comparing with HASHED_SECRET
     const login = (inputSecret) => {
         const token = generateHash(inputSecret); // Hash the input with the salt
         if (token === HASHED_SECRET) {  // Compare hashed input with pre-generated hash
             setAuthToken(token);
             localStorage.setItem('authToken', token); // Store token in localStorage
-        } 
+            return true;
+        } else {
+            toast.error("Login failed: Invalid secret key"); // Show error toast on failed login
+            return false;
+        }
     };
 
     const logout = () => {
         setAuthToken(null);
         localStorage.removeItem('authToken'); // Clear token from localStorage
-    };
-
-    // isAuthenticated function to validate token on each access attempt
-    const isAuthenticated = () => {
-        const storedToken = localStorage.getItem('authToken');
-        return storedToken === HASHED_SECRET; // Check if stored token matches HASHED_SECRET
     };
 
     useEffect(() => {

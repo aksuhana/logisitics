@@ -16,18 +16,13 @@ function LoginPage() {
     const { login, isAuthenticated } = useAuth();
 
     const handleLogin = () => {
+        console.log("inputSecret", inputSecret);
         login(inputSecret);
         if (isAuthenticated()) {
+            console.log("inputSecret1", inputSecret);
             navigate('/home');
         } else {
-            toast.error('Login failed: Invalid Key', {
-                position: "bottom-center",
-                autoClose: 3000,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
+            toast.error('Login failed: Invalid Key');
         }
     };
 
