@@ -1,20 +1,40 @@
-/* App.css */
-
-/* Container for the entire layout */
-.app-container {
-  display: flex;
-  min-height: 100vh;
-  overflow: hidden;
+/* Ensure the header stays fixed at the top */
+.headerTop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000; /* Higher z-index to keep it above other elements */
+  width: 100%;
+  background-color: #333;
 }
 
-/* Main content area */
+/* Adjust layout spacing to avoid content being hidden under the fixed header */
 .main-content {
-  flex: 1;
-  margin-left: 240px; /* Space for the sidebar */
-  padding-top: 80px; /* Space for the header */
-  padding: 20px;
+  padding-top: 64px; /* Adjust based on header height */
 }
 
-.main-content.authenticated {
-  background: linear-gradient(135deg, #d4f0e7, #a5e3c9); /* Background gradient */
+/* Sidebar styling to keep it fixed as well */
+.sidebar {
+  position: fixed;
+  top: 64px; /* Positioning below the fixed header */
+  left: 0;
+  height: calc(100vh - 64px); /* Full height minus header height */
+  width: 240px; /* Sidebar width */
+  overflow-y: auto; /* Scroll within sidebar if content is long */
+}
+
+/* Adjust main content area to account for the fixed sidebar */
+.main-content {
+  margin-left: 240px; /* Sidebar width */
+  padding: 24px;
+  background-color: #d4f0e7;
+  min-height: calc(100vh - 64px); /* Full height minus header */
+  overflow: auto;
+}
+
+/* Content overflow control */
+.data-grid-container {
+  overflow-y: auto;
+  max-height: calc(100vh - 128px); /* Adjusted for both header and sidebar */
 }

@@ -49,6 +49,7 @@ function AppLayout() {
             {isAuthenticated ? (
                 <>
                     {/* Header */}
+                    <div className='headerTop'>
                     <Header style={{ backgroundColor: '#333', padding: '0 20px', display: 'flex', alignItems: 'center' }}>
                         <HeaderText />
                         <Menu
@@ -82,6 +83,7 @@ function AppLayout() {
                             style={{ color: '#50c878', marginLeft: '10px' }}
                         />
                     </Header>
+                    </div>
 
                     {/* Layout with Sider and Content */}
                     <Layout style={{ flex: 1 }}>

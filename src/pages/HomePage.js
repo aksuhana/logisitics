@@ -22,7 +22,7 @@ const HomePage = () => {
         const generateSampleData = () => {
             const data = Array.from({ length: 7 }, (_, i) => ({
                 key: i + 1,
-                vehicleNo: `VEH${String(i + 1).padStart(3, '0')}`,
+                vehicleNo: `HR55AM2834`,
                 date: i < 4 ? `2023-04-01` : `2023-04-0${i + 1}`,  // Same date for first 4, different for others
                 from: i < 4 ? `City A` : `City ${String.fromCharCode(65 + (i % 26))}`, // Same from city for first 4
                 to: i < 4 ? `City Z` : `City ${String.fromCharCode(90 - (i % 26))}`,   // Same to city for first 4
@@ -263,6 +263,7 @@ const HomePage = () => {
                         </p>
                     </div>
                 )}
+                <div className="data-grid">
         <DataGrid
                 data={formData}
                 onDataChange={onDataChange} // Pass onDataChange to DataGrid
@@ -270,6 +271,7 @@ const HomePage = () => {
                 selectedYear={selectedYear}
                 selectedMonth={selectedMonth}
             />
+            </div>
             </div>
         </>
     );

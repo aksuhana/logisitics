@@ -7,6 +7,8 @@
     max-width: 100%;
     margin: auto;
     display: table;
+    margin-top: 15rem;
+    position: relative;
 }
 
 .form-wrapper {
@@ -48,3 +50,4 @@
     gap: 10px;
     margin-bottom: 20px;
 }
+
