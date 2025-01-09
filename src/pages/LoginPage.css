@@ -10,7 +10,6 @@
 }
 
 body, html {
-    height: 100%;
     margin: 0;
     font-family: Arial, sans-serif;
     background: linear-gradient(135deg, #e0f7fa, #50c878);

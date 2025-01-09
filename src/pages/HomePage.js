@@ -20,9 +20,9 @@ const HomePage = () => {
     // Generate 1000 sample records on component mount
     useEffect(() => {
         const generateSampleData = () => {
-            const data = Array.from({ length: 7 }, (_, i) => ({
+            const data = Array.from({ length: 5000 }, (_, i) => ({
                 key: i + 1,
-                vehicleNo: `HR55AM2834`,
+                vehicleNo: `HR55AM283${i+1}`,
                 date: i < 4 ? `2023-04-01` : `2023-04-0${i + 1}`,  // Same date for first 4, different for others
                 from: i < 4 ? `City A` : `City ${String.fromCharCode(65 + (i % 26))}`, // Same from city for first 4
                 to: i < 4 ? `City Z` : `City ${String.fromCharCode(90 - (i % 26))}`,   // Same to city for first 4
@@ -124,7 +124,7 @@ const HomePage = () => {
         <div className="home-container">
             <Input
                 placeholder="Enter Vehicle Number"
-                style={{ marginBottom: '20px', width: '100%' }}
+                style={{ marginBottom: '20px', width: '40%' }}
                 onChange={(e) => setFilterValue(e.target.value)}
                 onKeyDown={handleSearchEnter}  // Add onKeyDown to listen for Enter
                 value={filterValue}

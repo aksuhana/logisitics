@@ -7,7 +7,7 @@
     max-width: 100%;
     margin: auto;
     display: table;
-    margin-top: 15rem;
+    margin-top: 3rem;
     position: relative;
 }
 
@@ -49,5 +49,7 @@
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
+    margin-top: 20px;
+    margin-left: 35%;
 }
 
