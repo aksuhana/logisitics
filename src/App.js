@@ -12,6 +12,8 @@ import {
     MenuUnfoldOutlined,
 } from '@ant-design/icons';
 import LoginPage from './pages/LoginPage';
+import CrudPage from './pages/CrudPage';
+
 import HomePage from './pages/HomePage';
 import { AuthProvider, useAuth } from './AuthContext';
 import { ToastContainer } from 'react-toastify';
@@ -71,7 +73,10 @@ function AppLayout() {
                             <Menu.Item key="4">
                                 <a href="/about">About</a>
                             </Menu.Item>
-                            <Menu.Item key="5" onClick={logout}>
+                            <Menu.Item key="5">
+                                <a href="/crud">Crud</a>
+                            </Menu.Item>
+                            <Menu.Item key="6" onClick={logout}>
                                 Logout
                             </Menu.Item>
                         </Menu>
@@ -111,7 +116,10 @@ function AppLayout() {
                                 <Menu.Item key="4" icon={<InfoCircleOutlined />}>
                                     <a href="/about" className="sidebar-text">About</a>
                                 </Menu.Item>
-                                <Menu.Item key="5" icon={<LogoutOutlined />} onClick={logout}>
+                                <Menu.Item key="5" icon={<InfoCircleOutlined />}>
+                                    <a href="/crud" className="sidebar-text">Crud</a>
+                                </Menu.Item>
+                                <Menu.Item key="6" icon={<LogoutOutlined />} onClick={logout}>
                                     <span className="sidebar-text">Logout</span>
                                 </Menu.Item>
                             </Menu>
@@ -121,6 +129,7 @@ function AppLayout() {
                         <Content style={{ marginLeft: collapsed ? 0 : 240, padding: '24px', backgroundColor: '#d4f0e7', minHeight: 'calc(100vh - 64px)', overflow: 'auto' }}>
                             <Routes>
                                 <Route path="/home" element={<PrivateRoute><HomePage /></PrivateRoute>} />
+                                <Route path="/crud" element={<PrivateRoute><CrudPage /></PrivateRoute>} />
                                 <Route path="*" element={<Navigate to="/home" />} />
                             </Routes>
                         </Content>

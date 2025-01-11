@@ -1,7 +1,10 @@
 // src/components/DataGrid.js
 import React from "react";
-import { Table, InputNumber } from "antd";
+import { Table, InputNumber,Button, message, Popconfirm } from "antd";
 import moment from "moment";
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where } from "firebase/firestore";
+import { db } from "../firebase-config"; // Firebase setup file
+
 const DataGrid = ({
   data,
   onDataChange,
@@ -16,7 +19,7 @@ const DataGrid = ({
       .toLowerCase()
       .includes(filterValue.toLowerCase());
 
-    const itemDate = moment(item.date);
+    const itemDate = moment(item.journeyDate);
 
     const matchesYear = selectedYear
       ? itemDate.year().toString() === selectedYear
@@ -29,31 +32,94 @@ const DataGrid = ({
     return matchesVehicleNo && matchesYear && matchesMonth;
   });
 
-  const handleBalanceChange = (value, record) => {
-    const newData = data.map((item) => {
-      if (item.key === record.key) {
-        item.balance = Number(value) || 0;
 
+  // const handleBalanceChange = (value, record) => {
+  //   const newData = data.map((item) => {
+  //     console.log(item.id === record.id)
+  //     if (item.id === record.id) {
+  //       item.arrears = Number(value) || 0;
+
+  //       // Calculate profit or loss with defaults for missing values
+  //       const dealAmount = item.dealAmount || 0;
+  //       const advancedAmount = item.advancedAmount || 0;
+  //       const dieselAmount = item.dieselAmount || 0;
+  //       const driverAdvanceAmount = item.driverAdvanceAmount || 0;
+  //       const commissionAmount = item.commissionAmount || 0;
+  //       const otherAmount = item.otherAmount || 0;
+
+  //       const totalSpent =
+  //       advancedAmount + dieselAmount + driverAdvanceAmount + commissionAmount + otherAmount;
+  //       if (item.arrears === 0) {
+  //         item.profitOrLoss = dealAmount - totalSpent;
+  //       } else {
+  //         item.profitOrLoss = advancedAmount - totalSpent;
+  //       }
+  //     }
+  //     return item;
+  //   });
+
+  //   onDataChange(newData);
+  // };
+
+  const handleSetArrearsToZero = async (record) => {
+    const newData = data.map((item) => {
+      if (item.id === record.id) {
+        // Update arrears locally
+        item.arrears = 0;
+  
         // Calculate profit or loss with defaults for missing values
         const dealAmount = item.dealAmount || 0;
-        const advance = item.advance || 0;
-        const diesel = item.diesel || 0;
-        const driverAdvance = item.driverAdvance || 0;
-        const commission = item.commission || 0;
+        const advancedAmount = item.advancedAmount || 0;
+        const dieselAmount = item.dieselAmount || 0;
+        const driverAdvanceAmount = item.driverAdvanceAmount || 0;
+        const commissionAmount = item.commissionAmount || 0;
         const otherAmount = item.otherAmount || 0;
-
+  
         const totalSpent =
-          advance + diesel + driverAdvance + commission + otherAmount;
-        if (item.balance === 0) {
-          item.profitOrLoss = dealAmount - totalSpent;
-        } else {
-          item.profitOrLoss = advance - totalSpent;
-        }
+          advancedAmount + dieselAmount + driverAdvanceAmount + commissionAmount + otherAmount;
+  
+        item.profitOrLoss = dealAmount - totalSpent;
       }
       return item;
     });
-
-    onDataChange(newData);
+  
+    onDataChange(newData); // Update local state
+  
+    try {
+      // Prepare the fields to update in Firestore
+      const updatedFields = {
+        arrears: 0,
+        profitOrLoss: newData.find(item => item.id === record.id).profitOrLoss,
+      };
+  
+      // Update the record in Firestore
+      await updateToFirebase(record.id, updatedFields);
+      message.success('Arrears updated to 0 and saved successfully');
+    } catch (error) {
+      message.error('Failed to update the arrears');
+      console.error('Error updating Firestore:', error);
+  
+      // Optionally, revert local changes if Firebase update fails
+      const revertedData = data.map((item) => {
+        if (item.id === record.id) {
+          item.arrears = record.arrears; // Revert to original arrears
+          // Recalculate profitOrLoss or revert if necessary
+          // ...
+        }
+        return item;
+      });
+      onDataChange(revertedData);
+    }
+  };
+  
+  const updateToFirebase = async (id, updatedFields) => {
+    try {
+      const recordRef = doc(db, 'journeys', id);
+      await updateDoc(recordRef, updatedFields);
+    } catch (error) {
+      console.error('Error updating Firebase:', error);
+      throw error;
+    }
   };
 
   const columns = [
@@ -64,15 +130,29 @@ const DataGrid = ({
 
       key: "vehicleNo",
     },
-
+   
     {
       title: "Date",
 
-      dataIndex: "date",
+      dataIndex: "journeyDate",
 
-      key: "date",
+      key: "journeyDate",
     },
 
+    {
+      title: "From",
+
+      dataIndex: "sourceLocation",
+
+      key: "sourceLocation",
+    },
+    {
+      title: "To",
+
+      dataIndex: "destinationLocation",
+
+      key: "destinationLocation",
+    },
     {
       title: "Deal Amount",
 
@@ -84,28 +164,46 @@ const DataGrid = ({
     {
       title: "Advance",
 
-      dataIndex: "advance",
+      dataIndex: "advancedAmount",
 
-      key: "advance",
+      key: "advancedAmount",
     },
 
     {
       title: "Balance",
 
-      dataIndex: "balance",
+      dataIndex: "arrears",
 
-      key: "balance",
+      key: "arrears",
 
       render: (text, record) =>
-        record.balance !== 0 ? (
-          <InputNumber
-            min={0}
-            defaultValue={record.balance}
-            onBlur={(e) => handleBalanceChange(e.target.value, record)} // Update on blur
-            onPressEnter={(e) => handleBalanceChange(e.target.value, record)} // Update on Enter
-          />
+        record.arrears !== 0 ? (
+          <>
+            <span>{record.arrears}</span>
+            <Popconfirm
+              title="Are you sure you want to clear the balance?"
+              onConfirm={() => handleSetArrearsToZero(record)}
+              okText="Yes"
+              cancelText="No"
+              placement="topRight"
+            >
+              <Button
+                type="primary"
+                size="small"
+                style={{
+                  marginLeft: '10px',
+                  backgroundColor: '#1890ff',
+                  borderColor: '#1890ff',
+                  color: '#fff',
+                  borderRadius: '4px',
+                }}
+              >
+                Clear
+              </Button>
+            </Popconfirm>
+          </>
         ) : (
-          <span>{record.balance}</span>
+          <span>{record.arrears}</span>
         ),
     },
 
@@ -116,22 +214,22 @@ const DataGrid = ({
       render: (text, record) => {
         // Calculate total spent excluding advance
         const totalSpent =
-          (record.diesel || 0) +
-          (record.driverAdvance || 0) +
-          (record.commission || 0) +
+          (record.dieselAmount || 0) +
+          (record.driverAdvanceAmount || 0) +
+          (record.commissionAmount || 0) +
           (record.otherAmount || 0);
 
         // Conditional logic for profit/loss calculation
         const profitOrLoss =
-          record.balance === 0
+          record.arrears === 0
             ? record.dealAmount - totalSpent
-            : (record.advance ?? 0) - totalSpent;
+            : (record.advancedAmount ?? 0) - totalSpent;
         console.log(
           "totalSpent",
           totalSpent,
-          record.balance,
+          record.arrears,
           record.dealAmount,
-          record.advance,
+          record.advancedAmount,
           profitOrLoss
         );
         return (
@@ -152,25 +250,25 @@ const DataGrid = ({
     {
       title: "Diesel",
 
-      dataIndex: "diesel",
+      dataIndex: "dieselAmount",
 
-      key: "diesel",
+      key: "dieselAmount",
     },
 
     {
       title: "Driver Advance",
 
-      dataIndex: "driverAdvance",
+      dataIndex: "driverAdvanceAmount",
 
-      key: "driverAdvance",
+      key: "driverAdvanceAmount",
     },
 
     {
       title: "Commission",
 
-      dataIndex: "commission",
+      dataIndex: "commissionAmount",
 
-      key: "commission",
+      key: "commissionAmount",
     },
 
     {
@@ -184,7 +282,7 @@ const DataGrid = ({
 
   return (
     <Table
-      rowKey="key"
+      rowKey="id"
       columns={columns}
       dataSource={filteredData}
       pagination={{ pageSize: 10 }}
