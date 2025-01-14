@@ -1,7 +1,7 @@
 // src/pages/HomePage.js
 import React, { useState, useEffect } from 'react';
 import { CalendarOutlined, CarOutlined, SearchOutlined } from '@ant-design/icons';
-
+import { ToastContainer, toast } from 'react-toastify';
 import {Card,Space, Form, Input, DatePicker, Button, Select, InputNumber,Tag } from 'antd';
 import moment from 'moment';
 import './HomePage.css';
@@ -10,6 +10,7 @@ import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where,or
 import { db } from "../firebase-config"; // Firebase setup file
 import dayjs from 'dayjs';
 const { Option } = Select;
+
 
 const HomePage = () => {
     const [formData, setFormData] = useState([]);
@@ -107,9 +108,7 @@ const HomePage = () => {
             }
 
             try {
-                console.log("Selected Year:", selectedYear); // Should be a valid year (e.g., 2025)
-                console.log("Selected Month:", selectedMonth); // Should be a valid month (e.g., 1-12)
-                console.log("Selected Vehicle No:", selectedVehicleNo); 
+             
                 const q = query(
                     collection(db, "monthlySummaries"),
                     where("year", "==", parseInt(selectedYear)),
@@ -118,7 +117,6 @@ const HomePage = () => {
                 );
 
                 const querySnapshot = await getDocs(q);
-                console.log(!querySnapshot.empty)
                 if (!querySnapshot.empty) {
                     // Extract the data from the document
                     const summaryData = querySnapshot.docs[0].data();
@@ -208,11 +206,17 @@ const HomePage = () => {
     const handleSelectedVehicleNo = () =>{
         setSelectedVehicleNo('');
         const pattern = /^[A-Z]{2}\d{1,2}[A-Z]{1,2}\d{1,4}$/;
+        if(selectedYear&&selectedMonth){
         if (pattern.test(filterValue.toUpperCase())) {
             setSelectedVehicleNo(filterValue.toUpperCase());
         } else {
+            toast.error("Invalid vehicle number format! Please enter a valid format.");
             console.error("Invalid vehicle number format:", filterValue);
             // Optionally show an error message to the user
+        }
+        }
+        else{
+            toast.error("Please select Year and Month.")
         }
         console.log(selectedVehicleNo)
         console.log(filterValue)
@@ -435,6 +439,8 @@ const HomePage = () => {
                     onChange={handleInputVehicle}
                     value={filterValue}
                     />
+                          <ToastContainer />
+
 
                     {/* Submit Button */}
                     <Button
