@@ -4,7 +4,7 @@ import { Table, InputNumber,Button, message, Popconfirm, Tag } from "antd";
 import moment from "moment";
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where } from "firebase/firestore";
 import { db } from "../firebase-config"; // Firebase setup file
-
+import { CheckOutlined } from '@ant-design/icons';
 const DataGrid = ({
   data,
   onDataChange,
@@ -62,6 +62,31 @@ const DataGrid = ({
   //   onDataChange(newData);
   // };
 
+  const handleDelete = async (id) => {
+    try {
+      const timestamp = new Date().toISOString(); // Current timestamp
+  
+      // Update the document in Firestore
+      const recordRef = doc(db, "journeys", id);
+      await updateDoc(recordRef, { deletedAt: timestamp });
+  
+      // Update the local state to reflect the change
+      const updatedData = data
+      .map((item) =>
+        item.id === id ? { ...item, deletedAt: timestamp } : item
+      )
+      .filter((item) => !item.deletedAt); // Exclude items with deletedAt
+
+      onDataChange(updatedData);
+  
+      message.success("Record marked are deleted successfully");
+    } catch (error) {
+      message.error("Failed to mark the record as deleted");
+      console.error("Error updating Firestore:", error);
+    }
+  };
+  
+  
   const handleSetArrearsToZero = async (record) => {
     const newData = data.map((item) => {
       if (item.id === record.id) {
@@ -178,41 +203,51 @@ const DataGrid = ({
 
     {
       title: "Balance",
-
-      dataIndex: "arrears",
-
-      key: "arrears",
-
-      render: (text, record) =>
-        record.arrears !== 0 ? (
-          <>
-            <span>{record.arrears}</span>
-            <Popconfirm
-              title="Are you sure you want to clear the balance?"
-              onConfirm={() => handleSetArrearsToZero(record)}
-              okText="Yes"
-              cancelText="No"
-              placement="topRight"
-            >
-              <Button
-                type="primary"
-                size="small"
-                style={{
-                  marginLeft: '10px',
-                  backgroundColor: '#1890ff',
-                  borderColor: '#1890ff',
-                  color: '#fff',
-                  borderRadius: '4px',
-                }}
-              >
-                Clear
-              </Button>
-            </Popconfirm>
-          </>
-        ) : (
-          <span>{record.arrears}</span>
-        ),
-    },
+  dataIndex: "arrears",
+  key: "arrears",
+  render: (text, record) => (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        borderRadius: "4px",
+      }}
+    >
+      <span
+        style={{
+          fontWeight: "500",
+          fontSize: "14px",
+          color: record.arrears > 0 ? "#ff4d4f" : "#52c41a", // Red for positive balance, green otherwise
+        }}
+      >
+        ₹{record.arrears}
+      </span>
+      {record.arrears !== 0 && (
+        <Popconfirm
+          title="Are you sure you want to clear the balance?"
+          onConfirm={() => handleSetArrearsToZero(record)}
+          okText="Yes"
+          cancelText="No"
+          placement="topRight"
+        >
+          <Button
+            type="link"
+            icon={<CheckOutlined />}
+            style={{
+              color: "#1890ff",
+              marginLeft: "10px",
+              padding: "0",
+            }}
+          >
+            Clear
+          </Button>
+        </Popconfirm>
+      )}
+    </div>
+  ),
+    }
+    ,
 
     {
       title: "Profit/Loss",
@@ -292,6 +327,23 @@ const DataGrid = ({
       dataIndex: "otherAmount",
 
       key: "otherAmount",
+    },
+    {
+      title: "Delete",
+      key: "delete",
+      render: (_, record) => (
+        <Popconfirm
+          title="Are you sure you want to delete this record?"
+          onConfirm={() => handleDelete(record.id)}
+          okText="Yes"
+          cancelText="No"
+          placement="topRight"
+        >
+          <Button type="link" danger>
+            Delete
+          </Button>
+        </Popconfirm>
+      ),
     },
   ];
 

@@ -11,7 +11,10 @@
     margin-top: 3rem;
     position: relative;
 }
-
+.ant-form-item .ant-form-item-label
+{
+    overflow: visible;
+}
 .form-wrapper {
     display: table-row;
     width: 100%;
@@ -47,10 +50,10 @@
 }
 
 .filter-section {
-    display: flex;
+    display: inline-flex;
     gap: 10px;
     margin-bottom: 20px;
     margin-top: 20px;
-    margin-left: 35%;
+    /* margin-left: 35%; */
 }
 

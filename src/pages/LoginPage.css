@@ -48,7 +48,7 @@ body, html {
     background-color: var(--light-emerald);
     border: none;
     border-radius: 5px;
-    box-shadow: inset 0px 0px 5px var(--shadow-color);
+    /* box-shadow: inset 0px 0px 5px var(--shadow-color); */
     transition: box-shadow 0.3s ease;
     color: #333;
     font-weight: bold;

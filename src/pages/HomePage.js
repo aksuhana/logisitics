@@ -1,6 +1,8 @@
 // src/pages/HomePage.js
 import React, { useState, useEffect } from 'react';
-import { Form, Input, DatePicker, Button, Select, InputNumber } from 'antd';
+import { CalendarOutlined, CarOutlined, SearchOutlined } from '@ant-design/icons';
+
+import {Card,Space, Form, Input, DatePicker, Button, Select, InputNumber,Tag } from 'antd';
 import moment from 'moment';
 import './HomePage.css';
 import DataGrid from '../components/DataGrid';
@@ -53,7 +55,11 @@ const HomePage = () => {
                 const collectionRef = collection(db, "journeys");
 
                 // Create a query to order data by 'date' in descending order
-                const q = query(collectionRef, orderBy("journeyDate", "desc"));
+                const p = query(
+                    collectionRef,
+                    where("deletedAt", "==", ''),
+                );
+                const q = query(p, orderBy("journeyDate", "desc"));
 
                 // Fetch documents using the query
                 const querySnapshot = await getDocs(q);
@@ -81,6 +87,7 @@ const HomePage = () => {
             driverAdvanceAmount: parseFloat(values.driverAdvanceAmount) || 0,
             commissionAmount: parseFloat(values.commissionAmount) || 0,
             otherAmount: parseFloat(values.otherAmount) || 0,
+            deletedAt: ''
         };
 
         try {
@@ -186,15 +193,13 @@ const HomePage = () => {
         if (e.key === 'Enter') {
             let vehicleNo = e.target.value;
     
-            // Check if the input does not start with "HR", and prepend "HR" if needed
-            if (!vehicleNo.startsWith("HR")) {
-                vehicleNo = `HR${vehicleNo}`;
-            }
+            // // Check if the input does not start with "HR", and prepend "HR" if needed
+            // if (!vehicleNo.startsWith("HR")) {
+            //     vehicleNo = `HR${vehicleNo}`;
+            // }
     
             form.setFieldsValue({
                 vehicleNo: vehicleNo,
-                date: moment(), // Set the current date
-                from: "Delhi"
             });
     
             setFilterValue(e.target.value); // Update filter value in state
@@ -275,14 +280,13 @@ const HomePage = () => {
             <Input
                 placeholder="Enter Vehicle Number"
                 size='small'
-                style={{ marginBottom: '20px', width: '40%' }}
+                style={{ marginBottom: '10px', width: '40%' }}
                 onChange={(e) => setFilterValue(e.target.value)}
                 onKeyDown={handleSearchEnter}  // Add onKeyDown to listen for Enter
                 value={filterValue}
             />
 
             {/* Unified Form */}
-            {console.log(!selectedVehicleNo)}
             {!selectedVehicleNo &&(
             <Form form={form} layout="inline" onFinish={onFinish} className="one-row-form">
                 <div className="form-section">
@@ -361,87 +365,163 @@ const HomePage = () => {
             </Form>
             )}
 
-            {/* Filter Section */}
-            <div className="filter-section">
-                <Select
-                    placeholder="Select Year"
-                    style={{ width: 120 }}
-                    onChange={setSelectedYear}
-                    value={selectedYear || undefined}
-                    allowClear
-                >
-                    {['2022', '2023', '2024', '2025', '2026'].map(year => (
-                        <Option key={year} value={year}>{year}</Option>
-                    ))}
-                </Select>
+            
 
-                <Select
-                    placeholder="Select Month"
-                    style={{ width: 120 }}
-                    onChange={setSelectedMonth}
-                    value={selectedMonth || undefined}
-                    allowClear
-                >
-                    {['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'].map(month => (
-                        <Option key={month} value={month}>{month}</Option>
-                    ))}
-                </Select>
-                <Input
-                placeholder="Enter Vehicle Number"
-                style={{ marginBottom: '20px', width: '40%' }}
-                onChange={handleInputVehicle}
-                // onKeyDown={handleSearchEnter}  // Add onKeyDown to listen for Enter
-                value={filterValue}
-                />
-                <Button type="primary" onClick={handleSelectedVehicleNo}>
-                   Monthly Expenses
-                </Button>
 
-            </div>
 
             {/* Data Grid Component */}
             
         </div>
+        {/* Filter Section */}
+        <div
+                className="filter-section"
+                style={{
+                    padding: '20px',
+                    background: '#f9f9f9',
+                    borderRadius: '8px',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                }}
+                >
+                <Space
+                    direction="horizontal"
+                    size="middle"
+                    style={{ width: '100%', flexWrap: 'wrap', justifyContent: 'space-between' }}
+                >
+                    {/* Year Selection */}
+                    <Select
+                    placeholder={
+                        <>
+                        <CalendarOutlined /> Select Year
+                        </>
+                    }
+                    style={{ width: 160 }}
+                    onChange={setSelectedYear}
+                    value={selectedYear || undefined}
+                    allowClear
+                    >
+                    {['2022', '2023', '2024', '2025', '2026'].map((year) => (
+                        <Select.Option key={year} value={year}>
+                        {year}
+                        </Select.Option>
+                    ))}
+                    </Select>
+
+                    {/* Month Selection */}
+                    <Select
+                    placeholder={
+                        <>
+                        <CalendarOutlined /> Select Month
+                        </>
+                    }
+                    style={{ width: 160 }}
+                    onChange={setSelectedMonth}
+                    value={selectedMonth || undefined}
+                    allowClear
+                    >
+                    {['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'].map(
+                        (month) => (
+                        <Select.Option key={month} value={month}>
+                            {month}
+                        </Select.Option>
+                        )
+                    )}
+                    </Select>
+
+                    {/* Vehicle Number Input */}
+                    <Input
+                    placeholder="Enter Vehicle Number"
+                    prefix={<CarOutlined />}
+                    style={{ width: '300px', backgroundColor:'#8fd1b9' }}
+                    onChange={handleInputVehicle}
+                    value={filterValue}
+                    />
+
+                    {/* Submit Button */}
+                    <Button
+                    type="primary"
+                    icon={<SearchOutlined />}
+                    onClick={handleSelectedVehicleNo}
+                    >
+                    Monthly Expenses
+                    </Button>
+                </Space>
+                </div>
         <div>
-             {/* Monthly Expenses Section */}
-        {filterValue && selectedYear && selectedMonth && selectedVehicleNo &&(
-            <div className="monthly-expense-section">
-                <h3>Monthly Expenses for Vehicle Number:{selectedVehicleNo} on {selectedMonth}/{selectedYear} </h3>
-                <Form layout="inline">
-                    <Form.Item label="Driver Salary">
-                        <InputNumber
-                            min={0}
-                            value={driverSalary}
-                            onChange={(value) => setDriverSalary(value || 0)}
-                        />
-                    </Form.Item>
-                    <Form.Item label="Toll Amount">
-                        <InputNumber
-                            min={0}
-                            value={tollAmount}
-                            onChange={(value) => setTollAmount(value || 0)}
-                        />
-                    </Form.Item>
+         {/* Monthly Expenses Section */}
+         {filterValue && selectedYear && selectedMonth && selectedVehicleNo && (
+        <div
+            className="monthly-summary-container"
+            style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            margin: '20px auto',
+            maxWidth: '1200px',
+            gap: '20px',
+            }}
+        >
+            {/* Monthly Expenses Section */}
+            <div className="monthly-expense-section" style={{ flex: '1' }}>
+            <Card
+                title={`Monthly Expenses for Vehicle Number: ${selectedVehicleNo} on ${selectedMonth}/${selectedYear}`}
+                bordered={false}
+                style={{ boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)', borderRadius: '8px' }}
+            >
+                <Form layout="inline" style={{ gap: '12px', alignItems: 'center' }}>
+                <Form.Item label="Driver Salary" style={{ flex: '1' }}>
+                    <InputNumber
+                    min={0}
+                    value={driverSalary}
+                    onChange={(value) => setDriverSalary(value || 0)}
+                    style={{ width: '100%' }}
+                    placeholder="Enter Salary"
+                    />
+                </Form.Item>
+                <Form.Item label="Toll Amount" style={{ flex: '1' }}>
+                    <InputNumber
+                    min={0}
+                    value={tollAmount}
+                    onChange={(value) => setTollAmount(value || 0)}
+                    style={{ width: '100%' }}
+                    placeholder="Enter Toll"
+                    />
+                </Form.Item>
                 </Form>
                 <Button
-                    type="primary"
-                    style={{ marginTop: '10px' }}
-                    onClick={saveMonthlySummary}
+                type="primary"
+                style={{ width: '100%', marginTop: '16px' }}
+                onClick={saveMonthlySummary}
                 >
-                    Save Monthly Summary
+                Save Monthly Summary
                 </Button>
+            </Card>
             </div>
+
+            {/* Monthly Profit/Loss Display */}
+            <div className="profit-loss-display" style={{ flex: '1', display: 'inline-flex' }}>
+            <Card
+                bordered={false}
+                style={{
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                borderRadius: '8px',
+                }}
+            >
+                <h3 style={{ marginBottom: '16px' }}>Net Profit/Loss</h3>
+
+                <Tag 
+                        color={monthlyProfitLoss >= 0 ? "green" : "red"}
+                        style={{ fontWeight: "bold", fontSize:'18px',padding: '10px 16px' }}
+                        >
+                        {monthlyProfitLoss >= 0
+                            ? `₹${monthlyProfitLoss}`
+                            : `₹${Math.abs(monthlyProfitLoss)}`}
+                        </Tag>
+            </Card>
+            </div>
+        </div>
         )}
 
-        {/* Monthly Profit/Loss Display */}
-        {filterValue && selectedYear && selectedMonth && selectedVehicleNo && (
-            <div className="profit-loss-display">
-                {/* <h3>Net Profit/Loss for {selectedMonth}/{selectedYear}</h3> */}
-                <p style={{ fontWeight: 'bold', color: monthlyProfitLoss >= 0 ? 'green' : 'red' }}>
-                    {monthlyProfitLoss >= 0 ? `Profit: ${monthlyProfitLoss}` : `Loss: -${Math.abs(monthlyProfitLoss)}`}
-                </p>
-            </div>
-        )}
+
+
                 <div className="data-grid">
         <DataGrid
                 data={formData}
