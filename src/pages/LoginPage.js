@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Input, Button, Typography } from 'antd';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast,Slide, Zoom, Flip } from 'react-toastify';
 import { useAuth } from '../AuthContext';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -28,7 +28,7 @@ function LoginPage() {
 
     return (
         <div className="login-container">
-            <Title level={2}>Login</Title>
+            <Title className='name-size' level={2}>SHIVGANGA LOGISTICS</Title>
             <Form
                 name="loginForm"
                 layout="vertical"
@@ -40,7 +40,7 @@ function LoginPage() {
                     rules={[{ required: true, message: 'Please enter your secret key!' }]}
                 >
                     <Input.Password
-                        placeholder="Secret Key"
+                        placeholder="Enter Secret Key to Login"
                         value={inputSecret}
                         onChange={(e) => setInputSecret(e.target.value)}
                     />
@@ -51,7 +51,8 @@ function LoginPage() {
                     </Button>
                 </Form.Item>
             </Form>
-            <ToastContainer />
+            <ToastContainer position="bottom-right" autoClose={3000} transition={Flip} />
+            
             <div className="footer-text">
                 <p>Need help? <a href="#">Contact Support</a></p>
             </div>

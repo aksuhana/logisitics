@@ -9,6 +9,11 @@
   background-color: #333;
 }
 
+.custom-layout {
+  min-height: 100vh;
+  width: 100vw;
+  background: linear-gradient(135deg, #8fd1b9, #8645ba); /* Gradient background */
+}
 /* Adjust layout spacing to avoid content being hidden under the fixed header */
 .main-content {
   padding-top: 64px; /* Adjust based on header height */
@@ -26,7 +31,7 @@
 
 /* Adjust main content area to account for the fixed sidebar */
 .main-content {
-  margin-left: 240px; /* Sidebar width */
+  /* margin-left: 240px; Sidebar width */
   padding: 24px;
   background-color: #d4f0e7;
   min-height: calc(100vh - 64px); /* Full height minus header */

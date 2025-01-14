@@ -142,3 +142,7 @@ body, html {
 .footer-text a:hover {
     text-decoration: underline;
 }
+
+.name-size{
+    font-size: 28px !important;
+}

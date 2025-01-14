@@ -1,5 +1,5 @@
 // src/App.js
-import React, { useState } from 'react';
+import React,{ useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { Layout, Menu, Button } from 'antd';
 import {
@@ -26,12 +26,31 @@ function PrivateRoute({ children }) {
     const { isAuthenticated } = useAuth();
     return isAuthenticated ? children : <Navigate to="/login" />;
 }
+const Clock = () => {
+    const [time, setTime] = useState('');
+
+    useEffect(() => {
+        const updateTime = () => {
+            const now = new Date();
+            const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+            setTime(now.toLocaleTimeString('en-US', options));
+        };
+
+        updateTime(); // Initialize immediately
+        const timer = setInterval(updateTime, 1000);
+
+        return () => clearInterval(timer); // Cleanup on unmount
+    }, []);
+
+    return <span style={{ marginLeft:'10px', fontWeight: 'bold', fontSize: '16px', color: '#fff' }}>{time}</span>;
+};
+
 
 // Header text component with subtle animation
 function HeaderText() {
     return (
         <div className="header-title">
-            Shiva Logistics
+            SHIVGANGA LOGISTICS
         </div>
     );
 }
@@ -45,7 +64,7 @@ function AppLayout() {
     };
 
     return (
-        <Layout style={{ minHeight: '100vh', width: '100vw' }}>
+        <Layout className="custom-layout">
             <ToastContainer position="top-right" autoClose={3000} />
 
             {isAuthenticated ? (
@@ -54,6 +73,7 @@ function AppLayout() {
                     <div className='headerTop'>
                     <Header style={{ backgroundColor: '#333', padding: '0 20px', display: 'flex', alignItems: 'center' }}>
                         <HeaderText />
+                        <Clock />
                         <Menu
                             theme="dark"
                             mode="horizontal"
@@ -61,10 +81,10 @@ function AppLayout() {
                             className="header-menu"
                             style={{ marginLeft: 'auto', backgroundColor: '#333' }}
                         >
-                            <Menu.Item key="1">
+                            <Menu.Item key="1" icon={<HomeOutlined />}>
                                 <a href="/home">Home</a>
                             </Menu.Item>
-                            <Menu.Item key="2">
+                            {/* <Menu.Item key="2">
                                 <a href="/profile">Profile</a>
                             </Menu.Item>
                             <Menu.Item key="3">
@@ -75,24 +95,24 @@ function AppLayout() {
                             </Menu.Item>
                             <Menu.Item key="5">
                                 <a href="/crud">Crud</a>
-                            </Menu.Item>
-                            <Menu.Item key="6" onClick={logout}>
-                                Logout
+                            </Menu.Item> */}
+                            <Menu.Item key="2" onClick={logout}  icon={<LogoutOutlined />}>
+                            <span className="sidebar-text">Logout</span>
                             </Menu.Item>
                         </Menu>
                         {/* Sidebar Toggle Button */}
-                        <Button
+                        {/* <Button
                             type="text"
                             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                             onClick={toggleSidebar}
                             style={{ color: '#50c878', marginLeft: '10px' }}
-                        />
+                        /> */}
                     </Header>
                     </div>
 
                     {/* Layout with Sider and Content */}
                     <Layout style={{ flex: 1 }}>
-                        <Sider
+                        {/* <Sider
                             width={240}
                             theme="dark"
                             className={collapsed ? 'sidebar-hidden' : 'sidebar'}
@@ -123,13 +143,12 @@ function AppLayout() {
                                     <span className="sidebar-text">Logout</span>
                                 </Menu.Item>
                             </Menu>
-                        </Sider>
+                        </Sider> */}
 
                         {/* Main Content */}
-                        <Content style={{ marginLeft: collapsed ? 0 : 240, padding: '24px', backgroundColor: '#d4f0e7', minHeight: 'calc(100vh - 64px)', overflow: 'auto' }}>
+                        <Content style={{ padding: '24px', backgroundColor: '#d4f0e7', minHeight: 'calc(100vh - 64px)', overflow: 'auto' }}>
                             <Routes>
                                 <Route path="/home" element={<PrivateRoute><HomePage /></PrivateRoute>} />
-                                <Route path="/crud" element={<PrivateRoute><CrudPage /></PrivateRoute>} />
                                 <Route path="*" element={<Navigate to="/home" />} />
                             </Routes>
                         </Content>

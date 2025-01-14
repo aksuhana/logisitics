@@ -1,6 +1,6 @@
 // src/components/DataGrid.js
 import React from "react";
-import { Table, InputNumber,Button, message, Popconfirm } from "antd";
+import { Table, InputNumber,Button, message, Popconfirm, Tag } from "antd";
 import moment from "moment";
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where } from "firebase/firestore";
 import { db } from "../firebase-config"; // Firebase setup file
@@ -11,6 +11,7 @@ const DataGrid = ({
   filterValue,
   selectedYear,
   selectedMonth,
+  selectedVehicleNo,
 }) => {
   // Filter data based on search and selected filters
 
@@ -124,6 +125,12 @@ const DataGrid = ({
 
   const columns = [
     {
+      title: "SR",
+      dataIndex: "sr",
+      key: "sr",
+      render: (text, record, index) => index + 1,
+    },
+    {
       title: "Vehicle No",
 
       dataIndex: "vehicleNo",
@@ -233,16 +240,24 @@ const DataGrid = ({
           profitOrLoss
         );
         return (
-          <span
-            style={{
-              color: profitOrLoss >= 0 ? "green" : "red",
-              fontWeight: "bold",
-            }}
-          >
-            {profitOrLoss >= 0
-              ? `Profit: ${profitOrLoss}`
-              : `Loss: -${Math.abs(profitOrLoss)}`}
-          </span>
+          // <span
+          //   style={{
+          //     color: profitOrLoss >= 0 ? "green" : "red",
+          //     fontWeight: "bold",
+          //   }}
+          // >
+          //   {profitOrLoss >= 0
+          //     ? `Profit: ${profitOrLoss}`
+          //     : `Loss: -${Math.abs(profitOrLoss)}`}
+          // </span>
+          <Tag
+          color={profitOrLoss >= 0 ? "green" : "red"}
+          style={{ fontWeight: "bold", width: "70px", textAlign: "right", }}
+        >
+          {profitOrLoss >= 0
+            ? `${profitOrLoss}`
+            : `-${Math.abs(profitOrLoss)}`}
+        </Tag>
         );
       },
     },

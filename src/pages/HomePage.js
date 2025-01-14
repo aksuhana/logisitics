@@ -4,16 +4,19 @@ import { Form, Input, DatePicker, Button, Select, InputNumber } from 'antd';
 import moment from 'moment';
 import './HomePage.css';
 import DataGrid from '../components/DataGrid';
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where } from "firebase/firestore";
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where,orderBy  } from "firebase/firestore";
 import { db } from "../firebase-config"; // Firebase setup file
-
+import dayjs from 'dayjs';
 const { Option } = Select;
 
 const HomePage = () => {
     const [formData, setFormData] = useState([]);
     const [filterValue, setFilterValue] = useState('');
-    const [selectedYear, setSelectedYear] = useState('');
-    const [selectedMonth, setSelectedMonth] = useState('');
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
+    const [selectedMonth, setSelectedMonth] = useState(
+        (new Date().getMonth() + 1).toString().padStart(2, '0') // Pad single-digit months
+    );
+    const [selectedVehicleNo, setSelectedVehicleNo] = useState()
     const [form] = Form.useForm();
     const [driverSalary, setDriverSalary] = useState(0);
     const [tollAmount, setTollAmount] = useState(0);
@@ -47,7 +50,13 @@ const HomePage = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const querySnapshot = await getDocs(collection(db, "journeys")); // Replace with your collection name
+                const collectionRef = collection(db, "journeys");
+
+                // Create a query to order data by 'date' in descending order
+                const q = query(collectionRef, orderBy("journeyDate", "desc"));
+
+                // Fetch documents using the query
+                const querySnapshot = await getDocs(q);
                 const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
                 setFormData(data); // Update state with fetched data
@@ -61,7 +70,7 @@ const HomePage = () => {
 
     const onFinish = async (values) => {
         const formattedData = {
-            vehicleNo: values.vehicleNo,
+            vehicleNo: values.vehicleNo.toUpperCase(),
             journeyDate: values.journeyDate.format("YYYY-MM-DD"),
             sourceLocation: values.sourceLocation,
             destinationLocation: values.destinationLocation,
@@ -78,25 +87,31 @@ const HomePage = () => {
             const docRef = await addDoc(collection(db, "journeys"), formattedData); // Replace with your collection name
             setFormData((prevData) => [...prevData, { id: docRef.id, ...formattedData }]); // Append new data
             form.resetFields(); // Reset form fields after submission
+            setFilterValue('')
         } catch (error) {
             console.error("Error saving data:", error);
         }
     };
     useEffect(() => {
         const fetchMonthlySummary = async () => {
-            if (!selectedYear || !selectedMonth) {
+            console.log(!selectedYear)
+            if (!selectedYear || !selectedMonth || !selectedVehicleNo) {
                 return;
             }
 
             try {
+                console.log("Selected Year:", selectedYear); // Should be a valid year (e.g., 2025)
+                console.log("Selected Month:", selectedMonth); // Should be a valid month (e.g., 1-12)
+                console.log("Selected Vehicle No:", selectedVehicleNo); 
                 const q = query(
                     collection(db, "monthlySummaries"),
                     where("year", "==", parseInt(selectedYear)),
-                    where("month", "==", parseInt(selectedMonth))
+                    where("month", "==", parseInt(selectedMonth)),
+                    where("vehicleNo", "==", selectedVehicleNo)
                 );
 
                 const querySnapshot = await getDocs(q);
-
+                console.log(!querySnapshot.empty)
                 if (!querySnapshot.empty) {
                     // Extract the data from the document
                     const summaryData = querySnapshot.docs[0].data();
@@ -113,10 +128,12 @@ const HomePage = () => {
         };
 
         fetchMonthlySummary();
-    }, [selectedYear, selectedMonth]);
+    }, [selectedYear, selectedMonth, selectedVehicleNo
+
+    ]);
 
     const saveMonthlySummary = async () => {
-        if (!selectedYear || !selectedMonth) {
+        if (!selectedYear || !selectedMonth || !selectedVehicleNo) {
             alert("Please select a valid year and month!");
             return;
         }
@@ -124,6 +141,7 @@ const HomePage = () => {
         const summaryData = {
             year: parseInt(selectedYear),
             month: parseInt(selectedMonth),
+            vehicleNo: selectedVehicleNo,
             date: moment().format("YYYY-MM-DD"), // Current date
             driverSalary,
             tollAmount,
@@ -135,7 +153,8 @@ const HomePage = () => {
             const q = query(
                 monthlySummaryCollection,
                 where("year", "==", parseInt(selectedYear)),
-                where("month", "==", parseInt(selectedMonth))
+                where("month", "==", parseInt(selectedMonth)),
+                where("vehicleNo", "==", selectedVehicleNo)
             );
     
             const querySnapshot = await getDocs(q);
@@ -146,11 +165,15 @@ const HomePage = () => {
                 const docRef = doc(db, "monthlySummaries", existingDocId);
                 await updateDoc(docRef, summaryData);
                 alert("Monthly summary updated successfully!");
+                setFilterValue('')
+                setSelectedVehicleNo('')
                 console.log("Updated monthly summary:", summaryData);
             } else {
                 // Create a new document
                 const newDocRef = await addDoc(monthlySummaryCollection, summaryData);
                 alert("Monthly summary saved successfully!");
+                setFilterValue('')
+                setSelectedVehicleNo('')
                 console.log("Saved new monthly summary:", summaryData, "Document ID:", newDocRef.id);
             }
         } catch (error) {
@@ -177,6 +200,27 @@ const HomePage = () => {
             setFilterValue(e.target.value); // Update filter value in state
         }
     };
+    const handleSelectedVehicleNo = () =>{
+        setSelectedVehicleNo('');
+        const pattern = /^[A-Z]{2}\d{1,2}[A-Z]{1,2}\d{1,4}$/;
+        if (pattern.test(filterValue.toUpperCase())) {
+            setSelectedVehicleNo(filterValue.toUpperCase());
+        } else {
+            console.error("Invalid vehicle number format:", filterValue);
+            // Optionally show an error message to the user
+        }
+        console.log(selectedVehicleNo)
+        console.log(filterValue)
+    }
+    const handleInputVehicle = (e) => {
+        const value = e.target.value;
+        setFilterValue(value);
+
+        // Check if the value is "0" and trigger the function
+        if (value === '') {
+            setSelectedVehicleNo('');
+        }
+    };
     const updateBalance = () => {
         const dealAmount = parseFloat(form.getFieldValue('dealAmount')) || 0;
         const advancedAmount = parseFloat(form.getFieldValue('advancedAmount')) || 0;
@@ -197,11 +241,12 @@ const HomePage = () => {
 
     // Calculate monthly profit/loss based on balance and total spent for each record
     const calculateMonthlyProfitLoss = () => {
+        console.log(formData)
         const filteredData = formData.filter(item => {
             const itemDate = moment(item.journeyDate);
-            return itemDate.year() === parseInt(selectedYear) && itemDate.month() + 1 === parseInt(selectedMonth);
+            return itemDate.year() === parseInt(selectedYear) && itemDate.month() + 1 === parseInt(selectedMonth) && item.vehicleNo === selectedVehicleNo ;
         });
-
+        console.log(filteredData)
         const totalProfitLoss = filteredData.reduce((acc, item) => {
             const totalSpent = (item.dieselAmount || 0) + (item.driverAdvanceAmount || 0) + (item.commissionAmount || 0) + (item.otherAmount || 0);
             
@@ -212,22 +257,24 @@ const HomePage = () => {
 
             return acc + profitLoss;
         }, 0);
-
+        // console.log(totalProfitLoss)
         // Deduct driver salary and toll amount from the total monthly profit/loss
         const netProfitLoss = totalProfitLoss - driverSalary - tollAmount;
         setMonthlyProfitLoss(netProfitLoss);
     };
 
     useEffect(() => {
-        if (selectedYear && selectedMonth) {
+        if (selectedYear && selectedMonth&& selectedVehicleNo) {
             calculateMonthlyProfitLoss();
         }
-    }, [selectedYear, selectedMonth, driverSalary, tollAmount, formData]);
+    }, [selectedYear,selectedVehicleNo, selectedMonth, driverSalary, tollAmount, formData]);
     return (
         <>
+        
         <div className="home-container">
             <Input
                 placeholder="Enter Vehicle Number"
+                size='small'
                 style={{ marginBottom: '20px', width: '40%' }}
                 onChange={(e) => setFilterValue(e.target.value)}
                 onKeyDown={handleSearchEnter}  // Add onKeyDown to listen for Enter
@@ -235,6 +282,8 @@ const HomePage = () => {
             />
 
             {/* Unified Form */}
+            {console.log(!selectedVehicleNo)}
+            {!selectedVehicleNo &&(
             <Form form={form} layout="inline" onFinish={onFinish} className="one-row-form">
                 <div className="form-section">
                     <div className="header-row">
@@ -252,13 +301,14 @@ const HomePage = () => {
                             message: 'Please enter a valid vehicle number (e.g., MH12AB1234)!',
                         },
                     ]}
+                    normalize={(value) => value?.toUpperCase() || ''}
                     >
                         <Input placeholder="Vehicle No" />
                         
                     </Form.Item>
                     <Form.Item name="journeyDate"
                      rules={[{ required: true, message: 'Please enter start date!' }]}>
-                        <DatePicker placeholder="Date" style={{ width: '150px' }} />
+                        <DatePicker placeholder="Date" style={{ width: '150px' }} defaultValue={dayjs()}/>
                     </Form.Item>
                     <Form.Item name="sourceLocation"
                      rules={[{ required: true, message: 'Please enter Source Place!' }]}
@@ -309,6 +359,7 @@ const HomePage = () => {
                     </Form.Item>
                 </div>
             </Form>
+            )}
 
             {/* Filter Section */}
             <div className="filter-section">
@@ -335,6 +386,17 @@ const HomePage = () => {
                         <Option key={month} value={month}>{month}</Option>
                     ))}
                 </Select>
+                <Input
+                placeholder="Enter Vehicle Number"
+                style={{ marginBottom: '20px', width: '40%' }}
+                onChange={handleInputVehicle}
+                // onKeyDown={handleSearchEnter}  // Add onKeyDown to listen for Enter
+                value={filterValue}
+                />
+                <Button type="primary" onClick={handleSelectedVehicleNo}>
+                   Monthly Expenses
+                </Button>
+
             </div>
 
             {/* Data Grid Component */}
@@ -342,9 +404,9 @@ const HomePage = () => {
         </div>
         <div>
              {/* Monthly Expenses Section */}
-        {selectedYear && selectedMonth && (
+        {filterValue && selectedYear && selectedMonth && selectedVehicleNo &&(
             <div className="monthly-expense-section">
-                <h3>Monthly Expenses for {selectedMonth}/{selectedYear}</h3>
+                <h3>Monthly Expenses for Vehicle Number:{selectedVehicleNo} on {selectedMonth}/{selectedYear} </h3>
                 <Form layout="inline">
                     <Form.Item label="Driver Salary">
                         <InputNumber
@@ -372,9 +434,9 @@ const HomePage = () => {
         )}
 
         {/* Monthly Profit/Loss Display */}
-        {selectedYear && selectedMonth && (
+        {filterValue && selectedYear && selectedMonth && selectedVehicleNo && (
             <div className="profit-loss-display">
-                <h3>Net Profit/Loss for {selectedMonth}/{selectedYear}</h3>
+                {/* <h3>Net Profit/Loss for {selectedMonth}/{selectedYear}</h3> */}
                 <p style={{ fontWeight: 'bold', color: monthlyProfitLoss >= 0 ? 'green' : 'red' }}>
                     {monthlyProfitLoss >= 0 ? `Profit: ${monthlyProfitLoss}` : `Loss: -${Math.abs(monthlyProfitLoss)}`}
                 </p>
@@ -387,6 +449,7 @@ const HomePage = () => {
                 filterValue={filterValue}
                 selectedYear={selectedYear}
                 selectedMonth={selectedMonth}
+                selectedVehicleNo={selectedVehicleNo}
             />
             </div>
             </div>
