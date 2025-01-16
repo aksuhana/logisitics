@@ -54,6 +54,9 @@
     gap: 10px;
     margin-bottom: 20px;
     margin-top: 20px;
-    /* margin-left: 35%; */
 }
 
+.ant-form-item .ant-form-item-label >label {
+    font-size: 12px;
+    font-family: 'Roboto', sans-serif;
+}

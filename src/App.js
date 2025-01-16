@@ -16,7 +16,7 @@ import CrudPage from './pages/CrudPage';
 
 import HomePage from './pages/HomePage';
 import { AuthProvider, useAuth } from './AuthContext';
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, Flip } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './styles/sidebarAnimations.css';
 
@@ -42,7 +42,8 @@ const Clock = () => {
         return () => clearInterval(timer); // Cleanup on unmount
     }, []);
 
-    return <span style={{ marginLeft:'10px', fontWeight: 'bold', fontSize: '16px', color: '#fff' }}>{time}</span>;
+    return <span style={{  marginLeft: 'auto',padding: '0px 20px',  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.05)',
+        backgroundColor: '#50c878', borderRadius:'10px', fontWeight: 'bold', fontSize: '18px', color: '#fff' }}>{time}</span>;
 };
 
 
@@ -65,7 +66,6 @@ function AppLayout() {
 
     return (
         <Layout className="custom-layout">
-            <ToastContainer position="top-right" autoClose={3000} />
 
             {isAuthenticated ? (
                 <>
@@ -168,6 +168,7 @@ function AppLayout() {
 function App() {
     return (
         <AuthProvider>
+        <ToastContainer position="bottom-center" autoClose={3000} transition={Flip} />
             <Router>
                 <AppLayout />
             </Router>

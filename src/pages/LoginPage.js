@@ -50,9 +50,7 @@ function LoginPage() {
                         Login
                     </Button>
                 </Form.Item>
-            </Form>
-            <ToastContainer position="bottom-right" autoClose={3000} transition={Flip} />
-            
+            </Form>            
             <div className="footer-text">
                 <p>Need help? <a href="#">Contact Support</a></p>
             </div>

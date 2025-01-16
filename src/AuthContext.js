@@ -18,11 +18,13 @@ export function AuthProvider({ children }) {
     };
 
     // Derived state to determine if the user is authenticated
+    console.log(authToken)
     const isAuthenticated = authToken === HASHED_SECRET;
 
     // Login function that validates the input by hashing and comparing with HASHED_SECRET
     const login = (inputSecret) => {
         const token = generateHash(inputSecret); // Hash the input with the salt
+        console.log(token)
         if (token === HASHED_SECRET) {  // Compare hashed input with pre-generated hash
             setAuthToken(token);
             localStorage.setItem('authToken', token); // Store token in localStorage

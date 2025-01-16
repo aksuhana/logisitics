@@ -4,7 +4,7 @@ import { Table, InputNumber,Button, message, Popconfirm, Tag } from "antd";
 import moment from "moment";
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where } from "firebase/firestore";
 import { db } from "../firebase-config"; // Firebase setup file
-import { CheckOutlined } from '@ant-design/icons';
+import { CheckOutlined, CreditCardFilled, CreditCardOutlined, DeleteOutlined } from '@ant-design/icons';
 const DataGrid = ({
   data,
   onDataChange,
@@ -233,14 +233,13 @@ const DataGrid = ({
         >
           <Button
             type="link"
-            icon={<CheckOutlined />}
+            icon={<CreditCardFilled />}
             style={{
-              color: "#1890ff",
+              color: "#50c878",
               marginLeft: "10px",
               padding: "0",
             }}
           >
-            Clear
           </Button>
         </Popconfirm>
       )}
@@ -329,8 +328,8 @@ const DataGrid = ({
       key: "otherAmount",
     },
     {
-      title: "Delete",
-      key: "delete",
+      title: "Action",
+      key: "action",
       render: (_, record) => (
         <Popconfirm
           title="Are you sure you want to delete this record?"
@@ -339,8 +338,7 @@ const DataGrid = ({
           cancelText="No"
           placement="topRight"
         >
-          <Button type="link" danger>
-            Delete
+          <Button type="link" danger icon={<DeleteOutlined />}>
           </Button>
         </Popconfirm>
       ),
