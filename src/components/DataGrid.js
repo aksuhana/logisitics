@@ -4,7 +4,7 @@ import { Table, InputNumber,Button, message, Popconfirm, Tag } from "antd";
 import moment from "moment";
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where } from "firebase/firestore";
 import { db } from "../firebase-config"; // Firebase setup file
-import { CheckOutlined, CreditCardFilled, CreditCardOutlined, DeleteOutlined } from '@ant-design/icons';
+import { CheckOutlined, CreditCardOutlined,CreditCardFilled, DeleteOutlined } from '@ant-design/icons';
 const DataGrid = ({
   data,
   onDataChange,

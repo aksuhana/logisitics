@@ -43,3 +43,10 @@
   overflow-y: auto;
   max-height: calc(100vh - 128px); /* Adjusted for both header and sidebar */
 }
+.ant-menu-dark.ant-menu-horizontal >.ant-menu-item-selected{
+  background-color: #378a98;
+}
+.ant-menu-dark.ant-menu-horizontal >.ant-menu-item-selected:hover{
+  background-color: #378a98;
+
+}

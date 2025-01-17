@@ -30,7 +30,7 @@ export function AuthProvider({ children }) {
             localStorage.setItem('authToken', token); // Store token in localStorage
             return true;
         } else {
-            toast.error("Login failed: Invalid secret key"); // Show error toast on failed login
+            // toast.error("Login failed: Invalid secret key"); // Show error toast on failed login
             return false;
         }
     };

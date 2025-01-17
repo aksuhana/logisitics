@@ -15,16 +15,19 @@ function LoginPage() {
     const navigate = useNavigate();
     const { login, isAuthenticated } = useAuth();
 
-    const handleLogin = () => {
-        console.log("inputSecret", inputSecret);
-        login(inputSecret);
-        if (isAuthenticated()) {
-            console.log("inputSecret1", inputSecret);
+    const handleLogin = async () => {
+        try {
+          const success = await login(inputSecret); // returns true if login is valid, false otherwise
+          if (success) {
             navigate('/home');
-        } else {
+          } else {
             toast.error('Login failed: Invalid Key');
+          }
+        } catch (err) {
+          console.error(err);
+          toast.error('An unexpected error occurred');
         }
-    };
+      };
 
     return (
         <div className="login-container">
