@@ -1,48 +1,62 @@
 /* src/pages/HomePage.css */
 
-:root {
-    --primary-color: #007BFF; /* Change to your preferred primary color */
-    --secondary-color: #f8f9fa;
-    --text-color: #333;
-}
-
 .home-container {
-    background-color: var(--secondary-color);
-    padding: 20px;
-    max-width: 800px;
-    margin: 50px auto;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    padding: 24px;
+    background-color: #f5f5f5bf;
+    border-radius: 8px;
+    max-width: 100%;
+    margin: auto;
+    display: table;
+    margin-top: 3rem;
+    position: relative;
+}
+.ant-form-item .ant-form-item-label
+{
+    overflow: visible;
+}
+.form-wrapper {
+    display: table-row;
+    width: 100%;
+}
+
+.header-row, .one-row-form {
+    display: table-row;
+    background-color: #f0f0f0;
+}
+
+.header-row span, .one-row-form .ant-form-item {
+    display: table-cell;
     text-align: center;
-    color: var(--text-color);
+    padding: 10px;
+    border: 1px solid #ccc;
+    color: #333;
 }
 
-.home-title {
-    font-size: 2.5rem;
-    color: var(--primary-color);
-    margin-bottom: 1rem;
-    font-weight: bold;
-}
-
-.home-content {
-    font-size: 1.2rem;
-    line-height: 1.6;
-    margin-top: 1rem;
-    color: var(--text-color);
-}
-
-.home-button {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 10px 20px;
+.cta-button {
+    background-color: #007bff;
     border: none;
-    border-radius: 5px;
+    font-weight: bold;
+    padding: 8px 16px;
     font-size: 1rem;
-    margin-top: 20px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    border-radius: 6px;
+    color: #fff;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.home-button:hover {
-    background-color: darken(var(--primary-color), 10%);
+.cta-button:hover {
+    background-color: #3a9b66;
+    transform: scale(1.05);
+}
+
+.filter-section {
+    display: inline-flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.ant-form-item .ant-form-item-label >label {
+    font-size: 12px;
+    font-family: 'Roboto', sans-serif;
 }

@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Input, Button, Typography } from 'antd';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast,Slide, Zoom, Flip } from 'react-toastify';
 import { useAuth } from '../AuthContext';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -15,20 +15,23 @@ function LoginPage() {
     const navigate = useNavigate();
     const { login, isAuthenticated } = useAuth();
 
-    const handleLogin = () => {
-        console.log("inputSecret", inputSecret);
-        login(inputSecret);
-        if (isAuthenticated()) {
-            console.log("inputSecret1", inputSecret);
+    const handleLogin = async () => {
+        try {
+          const success = await login(inputSecret); // returns true if login is valid, false otherwise
+          if (success) {
             navigate('/home');
-        } else {
+          } else {
             toast.error('Login failed: Invalid Key');
+          }
+        } catch (err) {
+          console.error(err);
+          toast.error('An unexpected error occurred');
         }
-    };
+      };
 
     return (
         <div className="login-container">
-            <Title level={2}>Login</Title>
+            <Title className='name-size' level={2}>SHIVGANGA LOGISTICS</Title>
             <Form
                 name="loginForm"
                 layout="vertical"
@@ -40,7 +43,7 @@ function LoginPage() {
                     rules={[{ required: true, message: 'Please enter your secret key!' }]}
                 >
                     <Input.Password
-                        placeholder="Secret Key"
+                        placeholder="Enter Secret Key to Login"
                         value={inputSecret}
                         onChange={(e) => setInputSecret(e.target.value)}
                     />
@@ -50,8 +53,7 @@ function LoginPage() {
                         Login
                     </Button>
                 </Form.Item>
-            </Form>
-            <ToastContainer />
+            </Form>            
             <div className="footer-text">
                 <p>Need help? <a href="#">Contact Support</a></p>
             </div>

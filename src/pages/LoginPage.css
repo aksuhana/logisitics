@@ -10,7 +10,6 @@
 }
 
 body, html {
-    height: 100%;
     margin: 0;
     font-family: Arial, sans-serif;
     background: linear-gradient(135deg, #e0f7fa, #50c878);
@@ -49,7 +48,7 @@ body, html {
     background-color: var(--light-emerald);
     border: none;
     border-radius: 5px;
-    box-shadow: inset 0px 0px 5px var(--shadow-color);
+    /* box-shadow: inset 0px 0px 5px var(--shadow-color); */
     transition: box-shadow 0.3s ease;
     color: #333;
     font-weight: bold;
@@ -142,4 +141,8 @@ body, html {
 }
 .footer-text a:hover {
     text-decoration: underline;
+}
+
+.name-size{
+    font-size: 28px !important;
 }

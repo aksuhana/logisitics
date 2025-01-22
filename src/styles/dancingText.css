@@ -1,0 +1,41 @@
+/* src/styles/dancingText.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap'); /* Optional: for a playful font */
+
+.dancing-text {
+    font-family: 'Poppins', sans-serif;
+    display: inline-block;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #ddd;
+    animation: colorChange 3s infinite alternate;
+}
+
+.dancing-text span {
+    display: inline-block;
+    animation: dance 1.5s infinite ease-in-out;
+}
+
+/* Keyframes for each letter to "dance" */
+@keyframes dance {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg) scale(1);
+    }
+    20% {
+        transform: translateY(-10px) rotate(-10deg) scale(1.1);
+    }
+    40% {
+        transform: translateY(5px) rotate(10deg) scale(1.05);
+    }
+    60% {
+        transform: translateY(-10px) rotate(-10deg) scale(1.1);
+    }
+    80% {
+        transform: translateY(0px) rotate(10deg) scale(1);
+    }
+}
+
+@keyframes colorChange {
+    0% { color: #50c878; }
+    100% { color: #3a9b66; }
+}
