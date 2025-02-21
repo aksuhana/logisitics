@@ -2,15 +2,41 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import CryptoJS from 'crypto-js';
 import { toast } from 'react-toastify'; // Import toast for notifications
-
+import { db } from './firebase-config'; // Import Firebase config
+import { doc, getDoc } from 'firebase/firestore';
 const AuthContext = createContext();
 
+const fetchSecrets = async () => {
+    try {
+      const docRef = doc(db, "secrets", "authSecret"); // Path in Firestore
+      const docSnap = await getDoc(docRef);
+      console.log(docSnap.data())
+      if (docSnap.exists()) {
+        return docSnap.data();
+      } else {
+        console.error("No secrets found in Firestore.");
+        return {};
+      }
+    } catch (error) {
+      console.error("Error fetching secrets:", error);
+      return {};
+    }
+  };
 // Pre-generated hash of "mySecretKey:SECRET_SALT" stored as a constant
-const HASHED_SECRET = "4bbbc26888b654e7655fa9562d811be3111ab3d7596de3f34a909894dcb8a606";
-const SECRET_SALT = "SECRET_SALT_LOGISTIC"; // Salt used to hash the input on the frontend
+// const HASHED_SECRET = "4bbbc26888b654e7655fa9562d811be3111ab3d7596de3f34a909894dcb8a606";
+// const SECRET_SALT = "SECRET_SALT_LOGISTIC"; // Salt used to hash the input on the frontend
 
 export function AuthProvider({ children }) {
     const [authToken, setAuthToken] = useState(() => localStorage.getItem('authToken'));
+    const [HASHED_SECRET, setHashedSecret] = useState("");
+    const [SECRET_SALT, setSecretSalt] = useState("");
+
+        useEffect(() => {
+            fetchSecrets().then((secrets) => {
+            setHashedSecret(secrets.HASHED_SECRET || "");
+            setSecretSalt(secrets.SECRET_SALT || "");
+            });
+        }, []);
 
     // Function to generate hash with user input + salt
     const generateHash = (inputSecret) => {

@@ -1,10 +1,11 @@
 // src/components/DataGrid.js
-import React from "react";
+import React, { useState } from "react";
 import { Table, InputNumber,Button, message, Popconfirm, Tag } from "antd";
 import moment from "moment";
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where } from "firebase/firestore";
 import { db } from "../firebase-config"; // Firebase setup file
 import { CheckOutlined, CreditCardOutlined,CreditCardFilled, DeleteOutlined } from '@ant-design/icons';
+
 const DataGrid = ({
   data,
   onDataChange,
@@ -61,6 +62,7 @@ const DataGrid = ({
 
   //   onDataChange(newData);
   // };
+  const [pagination, setPagination] = useState({ current: 1, pageSize: 10 });
 
   const handleDelete = async (id) => {
     try {
@@ -153,8 +155,13 @@ const DataGrid = ({
       title: "SR",
       dataIndex: "sr",
       key: "sr",
-      render: (text, record, index) => index + 1,
-    },
+      render: (text, record, index) => {
+        const currentPage = pagination.current || 1;  // Get current page
+        const pageSize = pagination.pageSize || 10;  // Get page size
+        return (currentPage - 1) * pageSize + index + 1; // Compute global index
+      },
+    }
+,    
     {
       title: "Vehicle No",
 
@@ -350,7 +357,14 @@ const DataGrid = ({
       rowKey="id"
       columns={columns}
       dataSource={filteredData}
-      pagination={{ pageSize: 10 }}
+      pagination={{
+        current: pagination.current,
+        pageSize: pagination.pageSize,
+        onChange: (page, pageSize) => setPagination({ current: page, pageSize }),
+      }}
+      scroll={{ x: 'max-content' }} 
+
+      
     />
   );
 };

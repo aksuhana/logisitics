@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { TruckOutlined, CalendarOutlined, SearchOutlined,EnvironmentOutlined, BankOutlined, CreditCardOutlined, WalletOutlined,  ToolOutlined, UserOutlined, PercentageOutlined, ProfileOutlined } from '@ant-design/icons'
 import { ToastContainer, toast } from 'react-toastify';
-import {Card,Space, Form, Input, DatePicker, Button, Select, InputNumber,Tag,Row, Col } from 'antd';
+import {Card,Space, Form, Input, DatePicker, Button, Select, InputNumber,Tag,Row, Col, Switch } from 'antd';
 import moment, { max } from 'moment';
 import './HomePage.css';
 import DataGrid from '../components/DataGrid';
@@ -15,13 +15,17 @@ const { Option } = Select;
 const HomePage = () => {
     const [formData, setFormData] = useState([]);
     const [filterValue, setFilterValue] = useState('');
-    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
-    const [selectedMonth, setSelectedMonth] = useState(
-        (new Date().getMonth() + 1).toString().padStart(2, '0') // Pad single-digit months
-    );
+    // const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
+    const [selectedYear, setSelectedYear] = useState();
+    // const [selectedMonth, setSelectedMonth] = useState(
+    //     (new Date().getMonth() + 1).toString().padStart(2, '0') // Pad single-digit months
+    // );
+     const [selectedMonth, setSelectedMonth] = useState();
     const [selectedVehicleNo, setSelectedVehicleNo] = useState()
     const [form] = Form.useForm();
     const [driverSalary, setDriverSalary] = useState(0);
+    const [emi, setemi] = useState(0)
+    const [is_emi_available, setIsEmiAvailable]= useState('no');
     const [tollAmount, setTollAmount] = useState(0);
     const [monthlyProfitLoss, setMonthlyProfitLoss] = useState(0);
 
@@ -135,10 +139,14 @@ const HomePage = () => {
                     // Extract the data from the document
                     const summaryData = querySnapshot.docs[0].data();
                     setDriverSalary(summaryData.driverSalary || 0);
+                    setIsEmiAvailable(summaryData.is_emi_available || 'no');
+                    setemi(summaryData.emi || 0);
                     setTollAmount(summaryData.tollAmount || 0);
                 } else {
                     // Reset values if no data is found
                     setDriverSalary(0);
+                    setIsEmiAvailable('no');
+                    setemi(0);
                     setTollAmount(0);
                 }
             } catch (error) {
@@ -153,7 +161,7 @@ const HomePage = () => {
 
     const saveMonthlySummary = async () => {
         if (!selectedYear || !selectedMonth || !selectedVehicleNo) {
-            alert("Please select a valid year and month!");
+            toast.error("Please select a valid year and month!");
             return;
         }
     
@@ -163,6 +171,8 @@ const HomePage = () => {
             vehicleNo: selectedVehicleNo,
             date: moment().format("YYYY-MM-DD"), // Current date
             driverSalary,
+            is_emi_available,
+            emi,
             tollAmount,
             profitLoss: monthlyProfitLoss, // Use calculated profit/loss
         };
@@ -183,21 +193,21 @@ const HomePage = () => {
                 const existingDocId = querySnapshot.docs[0].id;
                 const docRef = doc(db, "monthlySummaries", existingDocId);
                 await updateDoc(docRef, summaryData);
-                alert("Monthly summary updated successfully!");
+                toast.success("Monthly summary updated successfully!")
                 setFilterValue('')
                 setSelectedVehicleNo('')
                 console.log("Updated monthly summary:", summaryData);
             } else {
                 // Create a new document
                 const newDocRef = await addDoc(monthlySummaryCollection, summaryData);
-                alert("Monthly summary saved successfully!");
+                toast.success("Monthly summary saved successfully!")
                 setFilterValue('')
                 setSelectedVehicleNo('')
                 console.log("Saved new monthly summary:", summaryData, "Document ID:", newDocRef.id);
             }
         } catch (error) {
             console.error("Error saving monthly summary:", error);
-            alert("Error saving data. Please try again.");
+            toast.error("Error saving data. Please try again.");
         }
     };
     
@@ -282,7 +292,7 @@ const HomePage = () => {
         }, 0);
         // console.log(totalProfitLoss)
         // Deduct driver salary and toll amount from the total monthly profit/loss
-        const netProfitLoss = totalProfitLoss - driverSalary - tollAmount;
+        const netProfitLoss = totalProfitLoss - driverSalary - emi - tollAmount;
         setMonthlyProfitLoss(netProfitLoss);
     };
 
@@ -290,7 +300,7 @@ const HomePage = () => {
         if (selectedYear && selectedMonth&& selectedVehicleNo) {
             calculateMonthlyProfitLoss();
         }
-    }, [selectedYear,selectedVehicleNo, selectedMonth, driverSalary, tollAmount, formData]);
+    }, [selectedYear,selectedVehicleNo, selectedMonth, driverSalary, emi, tollAmount, formData]);
     return (
         <>
         
@@ -623,7 +633,31 @@ const HomePage = () => {
                     placeholder="Enter Toll"
                     />
                 </Form.Item>
+                <Form.Item label="Is EMI Available?">
+                    <Switch 
+                        checked={is_emi_available === "yes"} 
+                        onChange={(checked) => {
+                            setIsEmiAvailable(checked ? "yes" : "no");
+                            if (!checked) {
+                                setemi(0); // Reset EMI value to 0 when switching to "no"
+                            }
+                        }}
+                    />
+                </Form.Item>
+
+                {is_emi_available === "yes" && (
+                    <Form.Item label="EMI" style={{ flex: '1' }}>
+                        <InputNumber
+                            min={0}
+                            value={emi}
+                            onChange={(value) => setemi(value || 0)}
+                            style={{ width: '100%' }}
+                            placeholder="Enter EMI"
+                        />
+                    </Form.Item>
+                )}
                 </Form>
+                
                 <Button
                 type="primary"
                 style={{ width: '100%', marginTop: '16px' }}
