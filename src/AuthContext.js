@@ -10,7 +10,6 @@ const fetchSecrets = async () => {
     try {
       const docRef = doc(db, "secrets", "authSecret"); // Path in Firestore
       const docSnap = await getDoc(docRef);
-      console.log(docSnap.data())
       if (docSnap.exists()) {
         return docSnap.data();
       } else {

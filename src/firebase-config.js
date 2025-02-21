@@ -1,14 +1,15 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+
 const firebaseConfig = {
-  apiKey: "AIzaSyDbCGeIrpzvKHgH2gVYLjJh6spLCWyyUvM",
-  authDomain: "logistic-test-6128b.firebaseapp.com",
-  projectId: "logistic-test-6128b",
-  storageBucket: "logistic-test-6128b.firebasestorage.app",
-  messagingSenderId: "125594156039",
-  appId: "1:125594156039:web:efab946c1845d2692dbea2",
-  measurementId: "G-HJ6N6DPWRM"
+  apiKey: "AIzaSyApaBjbv4dRf635agJDCnby9EaX0B5ZGIA",
+  authDomain: "shiv-logistics.firebaseapp.com",
+  projectId: "shiv-logistics",
+  storageBucket: "shiv-logistics.firebasestorage.app",
+  messagingSenderId: "437094866784",
+  appId: "1:437094866784:web:bf95f129b84370abbb0805",
+  measurementId: "G-K00FCP5Y4F"
 };
 
 // Initialize Firebase
